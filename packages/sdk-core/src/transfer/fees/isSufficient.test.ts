@@ -139,6 +139,26 @@ describe('isSufficientOrigin', () => {
     expect(result).toBe(false)
   })
 
+  it('returns false when non-native asset balance covers existential deposit but not sent amount', async () => {
+    vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
+      return assetSymbol === nativeSymbol
+    })
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(80n) // 80 - 50 (ED) - 50 (amount) = -20
+
+    const nonNativeAsset = { symbol: 'USDT', existentialDeposit: '50' } as TAssetInfo
+    const result = await isSufficientOrigin(
+      mockApi,
+      origin,
+      destination,
+      sender,
+      feeNative,
+      { ...nonNativeAsset, amount },
+      undefined
+    )
+
+    expect(result).toBe(false)
+  })
+
   it('returns false when non-native asset with insufficient asset balance', async () => {
     vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
       return assetSymbol === nativeSymbol
