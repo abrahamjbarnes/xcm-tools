@@ -149,6 +149,15 @@ describe('validateDestination', () => {
     expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
 
+  it('should throw ScenarioNotSupportedError when destination is EthereumTestnet and origin is a Polkadot bridge origin (Mythos)', () => {
+    origin = 'Mythos'
+    destination = 'EthereumTestnet'
+
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
+  })
+
   it('should not throw when destination is undefined (relay destination)', () => {
     origin = 'AssetHubPolkadot'
     destination = 'Polkadot'

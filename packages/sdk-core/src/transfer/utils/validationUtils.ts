@@ -9,6 +9,7 @@ import {
 import {
   ETHEREUM_BRIDGE_ORIGINS,
   isBridge,
+  isEthereumBridgeOrigin,
   isExternalChain,
   isRelayChain,
   isTLocation,
@@ -70,7 +71,7 @@ export const validateDestination = <TApi, TRes, TSigner, TCustomChain extends st
   if (
     typeof destination === 'string' &&
     isExternalChain(destination) &&
-    !ETHEREUM_BRIDGE_ORIGINS.some(o => o === origin)
+    !isEthereumBridgeOrigin(origin, destination)
   ) {
     throw new ScenarioNotSupportedError(
       `Transfers to Ethereum are only supported from: ${ETHEREUM_BRIDGE_ORIGINS.join(', ')}`

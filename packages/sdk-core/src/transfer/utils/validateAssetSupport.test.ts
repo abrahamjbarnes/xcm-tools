@@ -398,7 +398,7 @@ describe('validateEthereumAsset', () => {
     expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Acala', asset)).not.toThrow()
   })
 
-  it('should return early when origin is Mythos', () => {
+  it('should return early when origin is Mythos and destination is Ethereum', () => {
     const asset = {
       symbol: 'TEST',
       location: {
@@ -408,6 +408,26 @@ describe('validateEthereumAsset', () => {
     } as TAssetInfo
 
     expect(() => validateEthereumAsset(mockApi, 'Mythos', 'Ethereum', asset)).not.toThrow()
+  })
+
+  it('should throw InvalidCurrencyError when origin is Mythos and destination is EthereumTestnet', () => {
+    const asset = {
+      symbol: 'MYTH',
+      location: {
+        parents: Parents.ZERO,
+        interior: { Here: null }
+      }
+    } as TAssetInfo
+
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+    expect(() => validateEthereumAsset(mockApi, 'Mythos', 'EthereumTestnet', asset)).toThrow(
+      InvalidCurrencyError
+    )
+    expect(() => validateEthereumAsset(mockApi, 'Mythos', 'EthereumTestnet', asset)).toThrow(
+      'Destination EthereumTestnet is only supported from following ecosystems: Westend, Paseo.'
+    )
   })
 
   it('should not throw for asset with Ethereum GlobalConsensus location', () => {

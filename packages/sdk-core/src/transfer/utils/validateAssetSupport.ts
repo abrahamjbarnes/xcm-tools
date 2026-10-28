@@ -102,15 +102,15 @@ export const validateEthereumAsset = <TApi, TRes, TSigner, TCustomChain extends 
   destination: TDestination,
   asset: TAssetInfo | null
 ) => {
-  if (
-    !asset ||
-    (!isTLocation(destination) && !isSnowbridge(origin, destination)) ||
-    origin === 'Mythos'
-  ) {
+  if (!asset || (!isTLocation(destination) && !isSnowbridge(origin, destination))) {
     return
   }
 
   validateEcosystems(origin, destination)
+
+  if (origin === 'Mythos') {
+    return
+  }
 
   const ADDITIONAL_ALLOWED_LOCATIONS = [
     RELAY_LOCATION,
